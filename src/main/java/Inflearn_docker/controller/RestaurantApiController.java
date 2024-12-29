@@ -3,9 +3,13 @@ package Inflearn_docker.controller;
 import Inflearn_docker.dto.CreateAndEditRestaurantMenuRequest;
 import Inflearn_docker.dto.CreateAndEditRestaurantRequest;
 import Inflearn_docker.model.RestaurantEntity;
+import Inflearn_docker.response.RestaurantMoreViewResponse;
+import Inflearn_docker.response.RestaurantViewResponse;
 import Inflearn_docker.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,15 +18,29 @@ public class RestaurantApiController {
     private final RestaurantService restaurantService;
 
     @GetMapping("/restaurant")   // 맛집 리스트 가져오기 API
-    public String getRestaurants() {
-        return "";
+    public List<RestaurantViewResponse> getRestaurants() {
+        return List.of(RestaurantViewResponse.builder()
+                .id(0L)
+                .name("test name")
+                .address("test address")
+                .build());
     }
 
     @GetMapping("/restaurant/{restaurantId}")    // 맛집 정보 가져오기 API
-    public String getRestaurant(
+    public List<RestaurantMoreViewResponse> getRestaurant(
             @PathVariable Long restaurantId
     ){
-        return "맛집 정보 가져오기" + restaurantId;
+        return List.of(RestaurantMoreViewResponse.builder()
+                .id(0L)
+                .name("test name")
+                .address("test address")
+                .menus(List.of(RestaurantMoreViewResponse.Menu.builder()
+                                .id(0L)
+                                .name("test menu name")
+                                .price(500)
+                                .build()
+                ))
+                .build());
     }
 
     @PostMapping("/restaurant")    // 맛집 생성 API

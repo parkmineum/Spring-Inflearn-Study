@@ -5,12 +5,14 @@ import Inflearn_docker.Repository.RestaurantRepository;
 import Inflearn_docker.dto.CreateAndEditRestaurantRequest;
 import Inflearn_docker.model.MenuEntity;
 import Inflearn_docker.model.RestaurantEntity;
+import Inflearn_docker.response.RestaurantMoreViewResponse;
+import Inflearn_docker.response.RestaurantViewResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -18,6 +20,39 @@ import java.util.List;
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final MenuRepository menuRepository;
+
+    @Transactional(readOnly = true)      // 생략 가능
+    public List<RestaurantViewResponse> getAllRestaurants() {
+        List<RestaurantEntity> restaurants = restaurantRepository.findAll();
+
+        // Entity 를 Response 객체로 변환
+        return restaurants.stream().map((restaurant) -> RestaurantViewResponse.builder()
+                .id(restaurant.getId())
+                .name(restaurant.getName())
+                .address(restaurant.getAddress())
+                .build()
+        ).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public RestaurantMoreViewResponse getRestaurantDetail(Long restaurantId) {
+        RestaurantEntity restaurant = restaurantRepository.findById(restaurantId).orElseThrow();
+        List<MenuEntity> menus  = menuRepository.findAllByRestaurantId(restaurantId);
+
+        return RestaurantMoreViewResponse.builder()
+                .id(restaurant.getId())
+                .name(restaurant.getName())
+                .address(restaurant.getAddress())
+                .menus(
+                        menus.stream().map((menu) -> RestaurantMoreViewResponse.Menu.builder()
+                                .id(menu.getId())
+                                .name(menu.getName())
+                                .price(menu.getPrice())
+                                .build())
+                                .collect(Collectors.toList())
+                )
+                .build();
+    }
 
     @Transactional
     public RestaurantEntity createRestaurant( CreateAndEditRestaurantRequest request){
