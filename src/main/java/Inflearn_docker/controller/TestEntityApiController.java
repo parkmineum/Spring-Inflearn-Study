@@ -1,4 +1,4 @@
-package Inflearn_docker.api;
+package Inflearn_docker.controller;
 
 import Inflearn_docker.service.TestService;
 import lombok.AllArgsConstructor;
