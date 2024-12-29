@@ -7,11 +7,11 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class CreateAndReditRestaurantReqeust{
+public class CreateAndEditRestaurantRequest{
     private final String name;
     private final String address;
 
-    private final List<CreateAndReditRestaurantMenuReqeust> menus;
+    private final List<CreateAndEditRestaurantMenuRequest> menus;
 
 //    {
 //        "id": Long,

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CreateAndReditRestaurantMenuReqeust {
+public class CreateAndEditRestaurantMenuRequest {
     private final String name;
     private final Integer price;
 }

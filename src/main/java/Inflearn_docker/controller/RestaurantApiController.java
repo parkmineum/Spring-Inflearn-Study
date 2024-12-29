@@ -1,11 +1,17 @@
 package Inflearn_docker.controller;
 
-import Inflearn_docker.dto.CreateAndReditRestaurantMenuReqeust;
-import Inflearn_docker.dto.CreateAndReditRestaurantReqeust;
+import Inflearn_docker.dto.CreateAndEditRestaurantMenuRequest;
+import Inflearn_docker.dto.CreateAndEditRestaurantRequest;
+import Inflearn_docker.model.RestaurantEntity;
+import Inflearn_docker.service.RestaurantService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 public class RestaurantApiController {
+
+    private final RestaurantService restaurantService;
 
     @GetMapping("/restaurant")   // 맛집 리스트 가져오기 API
     public String getRestaurants() {
@@ -20,27 +26,24 @@ public class RestaurantApiController {
     }
 
     @PostMapping("/restaurant")    // 맛집 생성 API
-    public String createRestaurant(
-            @RequestBody CreateAndReditRestaurantReqeust request
+    public RestaurantEntity createRestaurant(
+            @RequestBody CreateAndEditRestaurantRequest request
     ){
-        return "맛집 생성하기 , 맛집 이름 = " + request.getName() + "맛집 주소: " + request.getAddress()
-                + "맛집 메뉴:" + request.getMenus().get(0).getName() + request.getMenus().get(0).getPrice();
+        return restaurantService.createRestaurant(request);
     }
 
     @PutMapping("/restaurant/{restaurantId}")     // 맛집 수정 API
-    public String editRestaurant(
+    public void editRestaurant(
             @PathVariable Long restaurantId,
-            @RequestBody CreateAndReditRestaurantMenuReqeust request
+            @RequestBody CreateAndEditRestaurantRequest request
     ){
-        return "맛집 수정하기" + restaurantId + request.getName() + request.getPrice();
+        restaurantService.editRestaurant(restaurantId, request);
     }
 
     @DeleteMapping("/restaurant/{restaurantId}")   // 맛집 삭제 API
-    public String deleteRestaurant(
+    public void deleteRestaurant(
             @PathVariable Long restaurantId
     ){
-        return "" + restaurantId;
+        restaurantService.deleteRestaurant(restaurantId);
     }
-
-
 }
