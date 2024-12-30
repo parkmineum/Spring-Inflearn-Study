@@ -1,4 +1,4 @@
-package Inflearn_docker.dto;
+package Inflearn_docker.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

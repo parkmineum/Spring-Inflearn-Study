@@ -2,7 +2,7 @@ package Inflearn_docker.service;
 
 import Inflearn_docker.Repository.MenuRepository;
 import Inflearn_docker.Repository.RestaurantRepository;
-import Inflearn_docker.dto.CreateAndEditRestaurantRequest;
+import Inflearn_docker.request.CreateAndEditRestaurantRequest;
 import Inflearn_docker.model.MenuEntity;
 import Inflearn_docker.model.RestaurantEntity;
 import Inflearn_docker.response.RestaurantMoreViewResponse;

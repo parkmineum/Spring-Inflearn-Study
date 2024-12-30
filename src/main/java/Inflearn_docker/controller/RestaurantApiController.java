@@ -1,7 +1,6 @@
 package Inflearn_docker.controller;
 
-import Inflearn_docker.dto.CreateAndEditRestaurantMenuRequest;
-import Inflearn_docker.dto.CreateAndEditRestaurantRequest;
+import Inflearn_docker.request.CreateAndEditRestaurantRequest;
 import Inflearn_docker.model.RestaurantEntity;
 import Inflearn_docker.response.RestaurantMoreViewResponse;
 import Inflearn_docker.response.RestaurantViewResponse;
