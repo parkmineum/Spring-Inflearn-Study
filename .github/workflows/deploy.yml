@@ -1,0 +1,25 @@
+name: Deploy to EC2
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-ec2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH to EC2
+        uses: appleboy/ssh-action@v1.0.3     # 라이브러리 사용
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script_stop: true      # 아래 script 중 실패하는 명령이 하나라도 있으면 실패로 처리
+          script: |
+            cd /home/ubuntu/inflearn-server  
+            git pull origin main
+            ./gradlew clean build
+            sudo fuser -k -n tcp 8080 || true 
+            
+            # jar 파일을 실행시키는 명령어. 발생하는 로그들을 ./output.log 파일에 남김
+            nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
