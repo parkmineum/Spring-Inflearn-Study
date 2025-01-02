@@ -20,6 +20,5 @@ jobs:
             git pull origin main
             ./gradlew clean build
             sudo fuser -k -n tcp 8080 || true 
-            
             # jar 파일을 실행시키는 명령어. 발생하는 로그들을 ./output.log 파일에 남김
             nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
