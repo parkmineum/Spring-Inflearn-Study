@@ -1,24 +1,54 @@
-name: Deploy to EC2
+name: Deploy To EC2
+
 on:
   push:
     branches:
       - main
 
 jobs:
-  deploy-ec2:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: SSH to EC2
-        uses: appleboy/ssh-action@v1.0.3     # 라이브러리 사용
+      - name: Github Repository 파일 불러오기
+        uses: actions/checkout@v4
+
+      - name: JDK 17버전 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: application.yml 파일 만들기
+        run: echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+
+      - name: 테스트 및 빌드하기
+        run: ./gradlew clean build
+
+      - name: 빌드된 파일 이름 변경하기
+        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
+
+      - name: EC2에서 Git Repository 풀링하기
+        uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script_stop: true      # 아래 script 중 실패하는 명령이 하나라도 있으면 실패로 처리
           script: |
-            cd /home/ubuntu/inflearn-server  
+            cd /home/ubuntu/inflearn-server/tobe
             git pull origin main
-            ./gradlew clean build
-            sudo fuser -k -n tcp 8080 || true 
-            # jar 파일을 실행시키는 명령어. 발생하는 로그들을 ./output.log 파일에 남김
-            nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
+
+      - name: SSH로 EC2에 접속하기
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            rm -rf /home/ubuntu/inflearn-server/current
+            mkdir /home/ubuntu/inflearn-server/current
+            mv /home/ubuntu/inflearn-server/tobe/project.jar /home/ubuntu/inflearn-server/current/project.jar
+            cd /home/ubuntu/inflearn-server/current
+            sudo fuser -k -n tcp 8080 || true
+            nohup java -jar project.jar > ./output.log 2>&1 & 
+            rm -rf /home/ubuntu/inflearn-server/tobe
