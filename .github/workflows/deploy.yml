@@ -34,6 +34,8 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
+            # 필요한 디렉토리 존재 여부 확인 및 생성
+            mkdir -p /home/ubuntu/inflearn-server/tobe
             cd /home/ubuntu/inflearn-server/tobe
             git pull origin main
 
